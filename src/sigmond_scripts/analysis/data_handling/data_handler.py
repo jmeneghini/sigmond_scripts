@@ -5,6 +5,8 @@ from typing import NamedTuple
 import logging
 from sortedcontainers import SortedSet
 import tqdm
+# from pqdm.processes import pqdm
+import threading
 
 import sigmond_scripts.analysis.utils.util as util
 from sigmond_scripts.analysis.data_handling.data_files import DataFiles, FileInfo
@@ -16,11 +18,11 @@ import sigmond
 class DataHandler(metaclass=util.Singleton):
   """ The all important Data Handler!  """
 
-  rel_averaged_datadir = [""]
-  rel_rotated_datadir = [""]
-  # rel_rotated_pivotdir = ""
-
-  def __init__(self, project_info):
+  def __init__(self, project_info, shared_node = True, nodes=os.cpu_count()):
+    self.rel_raw_datadir = [""]
+    self.rel_averaged_datadir = [""]
+    self.rel_rotated_datadir = [""]
+    
     self.project_info = project_info
     
     self._raw_data = CorrelatorData()
@@ -31,11 +33,20 @@ class DataHandler(metaclass=util.Singleton):
     self.averaged_data_files = DataFiles()
     self.rotated_data_files = DataFiles()
 
-    self._findRawData()
+    if self.rel_raw_datadir[0]:
+      self._findRawData()
     if self.rel_averaged_datadir[0]:
       self.findAveragedData()
     if self.rel_rotated_datadir[0]:
       self.findRotatedData()
+
+    if nodes==None:
+      nodes = 1      
+    elif shared_node:
+      nodes /= 2
+      if nodes>8:
+        nodes = 8
+    self.nodes = nodes
 
   @property
   def project_dir(self):
@@ -43,7 +54,7 @@ class DataHandler(metaclass=util.Singleton):
 
   @property
   def raw_data_dirs(self):
-    return self.project_info.raw_data_dirs
+    return self.rel_raw_datadir #self.project_info.raw_data_dirs
 
   @property
   def bins_info(self):
@@ -167,6 +178,24 @@ class DataHandler(metaclass=util.Singleton):
       return self._raw_data.getChannelDataFiles(channel)
 
     return DataFiles()
+
+  def removeRawDataChannel(self, channel):
+    df = self.getRawDataFiles(channel)
+    _removeDataChannel(channel, df, self.raw_data_files, self._raw_data)
+
+  def removeAveragedDataChannel(self, channel):
+    df = self.getAveragedDataFiles(channel)
+    _removeDataChannel(channel, df, self.averaged_data_files, self._averaged_data)
+
+  def removeRotatedDataChannel(self, channel):
+    df = self.getRotatedDataFiles(channel)
+    _removeDataChannel(channel, df, self.rotated_data_files, self._rotated_data)
+  
+  def getRawDataFiles(self, channel):
+    if channel in self.raw_channels:
+      return self._raw_data.getChannelDataFiles(channel)
+
+    return DataFiles()
   
   def getAveragedDataFiles(self, channel):
     if channel in self.averaged_channels:
@@ -249,6 +278,44 @@ class DataHandler(metaclass=util.Singleton):
 
     if data_files.bin_files:
       logging.info("Reading bin data")
+      
+      # files = list(data_files.bin_files)
+      # if len(data_files.bin_files)>self.nodes:
+      #   nblock = int(len(data_files.bin_files)/self.nodes)+1
+      # else:
+      #   nblock = 1
+
+      # processes = []
+      # results = []
+      # for i in range(0,len(data_files.bin_files),nblock):
+      #   results.append(CorrelatorData())
+      #   if i>(len(data_files.bin_files)-nblock):
+      #     processes.append(threading.Thread(target=self._findSigmondDataSeries, args=(files[i:], sigmond.FileType.Bins, results[-1])))
+      #     processes[-1].start()
+      #     # self._raw_data += self._findSigmondDataSeries(files[i:], sigmond.FileType.Bins)
+      #   else:
+      #     processes.append(threading.Thread(target=self._findSigmondDataSeries, args=(files[i:i+nblock], sigmond.FileType.Bins, results[-1])))
+      #     processes[-1].start()
+      #     # self._raw_data += self._findSigmondDataSeries(files[i:i+nblock], sigmond.FileType.Bins)
+
+      # for process in tqdm.tqdm(processes):
+      #   process.join()
+      # args = []
+      # files = list(data_files.bin_files)
+      # if len(data_files.bin_files)>self.nodes:
+      #   nblock = int(len(data_files.bin_files)/self.nodes)+1
+      # else:
+      #   nblock = 1
+      # for i in tqdm.tqdm(range(0,len(data_files.bin_files),nblock)):
+      #   if i>(len(data_files.bin_files)-nblock):
+      #     args.append(files[i:])
+      #   else:
+      #     args.append(files[i:i+nblock])
+      # results = pqdm(args, self._findSigmondDataSeriesBins, n_jobs=self.nodes)
+      # # results = pqdm([[file, sigmond.FileType.Bins] for file in data_files.bin_files], self._findSigmondData, n_jobs=self.nodes, argument_type='args')
+      # print(results)
+      # for i in range(len(results)):
+      #   self._raw_data += results[i]
       for bin_file in tqdm.tqdm(data_files.bin_files):
         self._raw_data += self._findSigmondData(bin_file, sigmond.FileType.Bins)
 
@@ -259,6 +326,18 @@ class DataHandler(metaclass=util.Singleton):
 
     self.raw_data_files = data_files
     logging.info("done")
+  
+  def _findSigmondDataSeries(self, files, filetype, data):
+    # data = CorrelatorData()
+    for file in files:
+      data += self._findSigmondData(file, filetype)
+    # return data
+  
+  def _findSigmondDataRaw(self, files, filetype):
+    # data = CorrelatorData()
+    for file in files:
+      self._raw_data += self._findSigmondData(file, filetype)
+    # return data
 
   def findAveragedData(self, rotated=False):
     if rotated:
@@ -361,8 +440,8 @@ def _find_data_files(data_dir):
       for filename in files:
         full_filename = os.path.join(root, filename)
         _find_data_file(full_filename, data_files)
-
-  elif os.path.isfile(data_dir):
+  else:
+#   elif os.path.isfile(data_dir):
       _find_data_file(data_dir, data_files)
 
   if data_files.empty:
@@ -387,10 +466,13 @@ def _find_data_file(full_filename, data_files):
       roots.remove("Info")
   except OSError as err:
     pass
-
+  
   if not roots: 
+    filename = full_filename
+    if '[' in full_filename and ']' in full_filename:
+      filename = full_filename.split('[')[0]
     try:
-      file_type = sigmond.getFileID(full_filename)
+      file_type = sigmond.getFileID(filename)
     except ValueError:
       logging.warning(f"Invalid file '{full_filename}'")
       return
@@ -422,3 +504,32 @@ def _find_data_file(full_filename, data_files):
   data_files.addVEVFiles(*bl_vev_files)
   data_files.addBinFiles(*bin_files)
   data_files.addSamplingFiles(*smp_files)
+
+
+  
+def _removeDataChannel(channel, df, current_df, corr_data):
+  ops = corr_data.getChannelOperators(channel)
+  for op1 in ops:
+    for op2 in ops:
+      corr = sigmond.CorrelatorInfo(op1.operator_info, op2.operator_info)
+      corr_data._correlators.pop(corr, None)
+  corr_data._operator_set._operators.pop(channel)
+  current_df._sampling_files -= df._sampling_files
+
+  #unsure if works, have not checked
+  current_df._bl_corr_files.pop(channel, None) #-= df.bl_corr_files
+  current_df._bl_vev_files.pop(channel, None) #-= df.bl_vev_files
+
+  #check if bin files have more than one channel before deleting.
+  bin_files_to_remove = set()
+  for bin_file in df._bin_files:
+    delete_bin_file = True
+    for channel1 in corr_data._data_files:
+        if bin_file in corr_data._data_files[channel1]._bin_files and channel1!=channel:
+            delete_bin_file = False
+            break
+    if delete_bin_file:
+        bin_files_to_remove.add(bin_file)
+
+  current_df._bin_files -= bin_files_to_remove
+  corr_data._data_files.pop(channel)

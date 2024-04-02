@@ -173,6 +173,26 @@ class Channel:
 
     return _str
   
+  @classmethod 
+  def CreateFromString(cls, channel_string):
+    try:
+      isospin, strangeness, irrep, irrep_row, mom = channel_string.split(' ')
+      kw_args = {
+          "isospin"     : isospin[3:], #remove 'iso'
+          "strangeness" : strangeness[2:], #remove 'S='
+          "irrep"       : irrep,
+          "irrep_row"       : irrep_row,
+          "momentum_squared" : int(mom[4:]), #remove 'PSQ='
+      }
+    except ValueError as err:
+      isospin, strangeness, irrep, mom = channel_string.split(' ')
+      kw_args = {
+          "isospin"     : isospin[3:], #remove 'iso'
+          "strangeness" : strangeness[2:], #remove 'S='
+          "irrep"       : irrep,
+          "momentum_squared" : int(mom[4:]), #remove 'PSQ='
+      }
+    return cls(**kw_args)
 
   def __repr__(self):
     _str = "iso{}_S{}_{}".format(self.isospin, self.strangeness, self.irrep)

@@ -35,16 +35,24 @@ class CorrelatorData:
   def addCorrelator(self, correlator_info, tmin, tmax, fileinfo):
     op_snk = Operator(correlator_info.getSink())
     op_src = Operator(correlator_info.getSource())
+    # try:
+    #     print(op_snk.channel, self._operator_set.getOperators(op_snk.channel) )
+    # except KeyError as err:
+    #     print(op_snk.channel, [] )
     self._operator_set.addOperator(op_snk)
     self._operator_set.addOperator(op_src)
 
     if correlator_info not in self._correlators:
       self._correlators[correlator_info] = CorrelatorDataInfo(tmin, tmax, fileinfo)
       self._addFileInfo(fileinfo, op_snk.channel)
+    #   print(op_snk.channel, op_src, op_snk, 1)
     elif self._correlators[correlator_info].fileinfo != fileinfo:
       logging.warning(f"Correlator {correlator_info} already added with different file, skipping...")
     else:
       self._correlators[correlator_info] = self._correlators[correlator_info].getUpdatedTsepRange(tmin, tmax)
+    #   print(op_snk.channel, op_src, op_snk, 2)
+    # print(op_snk.channel, self._operator_set.getOperators(op_snk.channel) )
+    # print()
 
   def addVEV(self, vev, fileinfo):
     op = Operator(vev)
