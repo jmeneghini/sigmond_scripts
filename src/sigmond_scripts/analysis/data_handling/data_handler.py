@@ -5,8 +5,6 @@ from typing import NamedTuple
 import logging
 from sortedcontainers import SortedSet
 import tqdm
-# from pqdm.processes import pqdm
-import threading
 
 import sigmond_scripts.analysis.utils.util as util
 from sigmond_scripts.analysis.data_handling.data_files import DataFiles, FileInfo
@@ -358,10 +356,13 @@ class DataHandler(metaclass=util.Singleton):
     if data_files.bin_files:
       logging.info("Reading bin data")
       for bin_file in tqdm.tqdm(data_files.bin_files):
-        if rotated:
-          self._rotated_data += self._findSigmondData(bin_file, sigmond.FileType.Bins)
-        else:
-          self._averaged_data += self._findSigmondData(bin_file, sigmond.FileType.Bins)
+        try:
+          if rotated:
+            self._rotated_data += self._findSigmondData(bin_file, sigmond.FileType.Bins)
+          else:
+            self._averaged_data += self._findSigmondData(bin_file, sigmond.FileType.Bins)
+        except RuntimeError as err:
+          logging.warning(f"RuntimeError: {err}")
 
     if data_files.sampling_files:
       logging.info("Reading sampling data")

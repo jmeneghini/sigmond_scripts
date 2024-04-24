@@ -175,23 +175,50 @@ class Channel:
   
   @classmethod 
   def CreateFromString(cls, channel_string):
-    try:
-      isospin, strangeness, irrep, irrep_row, mom = channel_string.split(' ')
-      kw_args = {
-          "isospin"     : isospin[3:], #remove 'iso'
-          "strangeness" : strangeness[2:], #remove 'S='
-          "irrep"       : irrep,
-          "irrep_row"       : irrep_row,
-          "momentum_squared" : int(mom[4:]), #remove 'PSQ='
-      }
-    except ValueError as err:
-      isospin, strangeness, irrep, mom = channel_string.split(' ')
-      kw_args = {
-          "isospin"     : isospin[3:], #remove 'iso'
-          "strangeness" : strangeness[2:], #remove 'S='
-          "irrep"       : irrep,
-          "momentum_squared" : int(mom[4:]), #remove 'PSQ='
-      }
+    if ' ' in channel_string:
+        try:
+            isospin, strangeness, irrep, irrep_row, mom = channel_string.split(' ')
+            kw_args = {
+                "isospin"     : isospin[3:], #remove 'iso'
+                "strangeness" : strangeness[2:], #remove 'S='
+                "irrep"       : irrep,
+                "irrep_row"       : irrep_row,
+                "momentum_squared" : int(mom[4:]), #remove 'PSQ='
+            }
+        except ValueError as err:
+            isospin, strangeness, irrep, mom = channel_string.split(' ')
+            kw_args = {
+                "isospin"     : isospin[3:], #remove 'iso'
+                "strangeness" : strangeness[2:], #remove 'S='
+                "irrep"       : irrep,
+                "momentum_squared" : int(mom[4:]), #remove 'PSQ='
+            }
+    else:
+        try:
+            isospin, strangeness, irrep, irrep_row, mom = channel_string.split('_')
+            if 'm' in strangeness:
+              strangeness = -int(strangeness[-1])
+            else:
+              strangeness = int(strangeness[-1])
+            kw_args = {
+                "isospin"     : isospin[3:], #remove 'iso'
+                "strangeness" : strangeness, 
+                "irrep"       : irrep,
+                "irrep_row"       : irrep_row,
+                "momentum_squared" : int(mom[1:]), #remove 'P'
+            }
+        except ValueError as err:
+            isospin, strangeness, irrep, mom = channel_string.split('_')
+            if 'm' in strangeness:
+              strangeness = -int(strangeness[-1])
+            else:
+              strangeness = int(strangeness[-1])
+            kw_args = {
+                "isospin"     : isospin[3:], #remove 'iso'
+                "strangeness" : strangeness, 
+                "irrep"       : irrep,
+                "momentum_squared" : int(mom[1:]), #remove 'P'
+            }
     return cls(**kw_args)
 
   def __repr__(self):
