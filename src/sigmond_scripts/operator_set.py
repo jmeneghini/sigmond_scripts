@@ -4,11 +4,11 @@ import logging
 from sortedcontainers import SortedSet
 from typing import NamedTuple
 
-import sigmond_scripts.analysis.utils.util as util
-import sigmond_scripts.analysis.operator_info.operator as operator
-import sigmond_scripts.analysis.operator_info.channel as channel
-import sigmond_scripts.analysis.sigmond_info.sigmond_input as sigmond_input
-import sigmond_scripts.analysis.sigmond_info.sigmond_info as sigmond_info
+import sigmond_scripts.util as util
+import sigmond_scripts.operator as operator
+import sigmond_scripts.channel as channel
+import sigmond_scripts.sigmond_input as sigmond_input
+import sigmond_scripts.sigmond_info as sigmond_info
 #import sigmond_scripts.analysis.data_handling.data_handler as data_handler
 
 import sigmond

@@ -1,10 +1,10 @@
 import logging
 import regex
 
-from sigmond_scripts.analysis.operator_info.isospin import Isospin
-from sigmond_scripts.analysis.operator_info.channel import Channel
+from sigmond_scripts.isospin import Isospin
+from sigmond_scripts.channel import Channel
 import sigmond
-import sigmond_scripts.analysis.utils.util as util
+import sigmond_scripts.util as util
 
 flavor_map = {
     'G': "glueball",

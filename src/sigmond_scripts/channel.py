@@ -2,7 +2,7 @@ import copy
 from sortedcontainers import SortedSet
 
 import sigmond
-from sigmond_scripts.analysis.operator_info.isospin import Isospin
+from sigmond_scripts.isospin import Isospin
 
 irreprows = {
     'A1': 1,

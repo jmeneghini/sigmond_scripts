@@ -15,7 +15,7 @@ import h5py
 from sortedcontainers import SortedSet
 from aenum import MultiValueEnum
 
-import sigmond_scripts.analysis.operator_info.operator as operator_lib
+import sigmond_scripts.operator as operator_lib
 import sigmond
 
 

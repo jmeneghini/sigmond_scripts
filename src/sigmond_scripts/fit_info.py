@@ -6,8 +6,8 @@ from aenum import MultiValueEnum
 import regex
 
 import sigmond
-import sigmond_scripts.analysis.utils.util as util
-import sigmond_scripts.analysis.operator_info.operator
+import sigmond_scripts.util as util
+import sigmond_scripts.operator
 
 
 

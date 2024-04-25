@@ -10,9 +10,9 @@ import copy
 import xml.dom.minidom as minidom
 import numpy as np
 
-import sigmond_scripts.analysis.sigmond_info.sigmond_info as sigmond_info
-import sigmond_scripts.analysis.sigmond_info.fit_info as fit_info_lib
-import sigmond_scripts.analysis.utils.util as util
+import sigmond_scripts.sigmond_info as sigmond_info
+import sigmond_scripts.fit_info as fit_info_lib
+import sigmond_scripts.util as util
 
 import sigmond
 
