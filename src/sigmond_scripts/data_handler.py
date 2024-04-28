@@ -6,10 +6,10 @@ import logging
 from sortedcontainers import SortedSet
 import tqdm
 
-import sigmond_scripts.analysis.utils.util as util
-from sigmond_scripts.analysis.data_handling.data_files import DataFiles, FileInfo
-from sigmond_scripts.analysis.data_handling.correlator_data import CorrelatorData
-from sigmond_scripts.analysis.operator_info.operator import Operator
+import sigmond_scripts.util as util
+from sigmond_scripts.data_files import DataFiles, FileInfo
+from sigmond_scripts.correlator_data import CorrelatorData
+from sigmond_scripts.operator import Operator
 
 import sigmond
 

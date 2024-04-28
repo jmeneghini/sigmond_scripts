@@ -271,7 +271,7 @@ def linear_superposition_obs(obs_handler, obs_infos, coeffs):
 # PDF documents
 def create_doc(title, with_tikz=False):
   logging.info("Creating PDF...")
-  doc = pylatex.Document(geometry_options={'margin': '1.5cm'})
+  doc = pylatex.Document(geometry_options={'margin': '1.5cm'},imputenc=None)
   doc.packages.append(pylatex.Package('hyperref'))
   doc.packages.append(pylatex.Package('amssymb'))
   doc.packages.append(pylatex.Package('amsmath'))
