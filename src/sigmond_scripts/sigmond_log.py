@@ -8,9 +8,9 @@ from typing import NamedTuple
 from sortedcontainers import SortedSet, SortedDict
 
 import sigmond
-import utils.util as util
-from sigmond_info.fit_info import FitInfo
-from operator_info.operator import Operator
+import sigmond_scripts.util as util
+from sigmond_scripts.fit_info import FitInfo
+from sigmond_scripts.operator import Operator
 
 
 class SigmondLog(metaclass=ABCMeta):
@@ -52,42 +52,70 @@ class RotationLog(SigmondLog):
       return
 
     rotation_tasks_xml = log_xml_root.findall("Task/DoCorrMatrixRotation")
-    if len(rotation_tasks_xml) != 1:
-      logging.warning("Could not find single <DoCorrMatrixRotation> tag")
-      return
+    # if len(rotation_tasks_xml) != 1:
+    #   logging.warning("Could not find single <DoCorrMatrixRotation> tag")
+    #   return
 
-    rotation_task_xml = rotation_tasks_xml[0]
+    self.rotation_tasks_xmls = log_xml_root.findall("Task/DoCorrMatrixRotation")
+    # rotation_task_xml = rotation_tasks_xml[0]
 
-    self.pivot_type = ""
-    if rotation_task_xml.find("SinglePivot"):
-      self.pivot_type = "SinglePivot"
-    elif rotation_task_xml.find("RollingPivot"):
-        self.pivot_type = "RollingPivot"
     
-    if not self.pivot_type:
-      logging.warning("Only reading the of 'SinglePivot' or 'RollingPivot' rotation log files is supported")
-      return NotImplemented
+    self.pivot_types = {}
+    for i,rotation_task_xml in enumerate(self.rotation_tasks_xmls):
+      pivot_type = ""
+      if rotation_task_xml.find("SinglePivot"):
+        pivot_type = "SinglePivot"
+      elif rotation_task_xml.find("RollingPivot"):
+        pivot_type = "RollingPivot"
+      self.pivot_types[i] = pivot_type
+    
+    # if not self.pivot_type:
+    #   logging.warning("Only reading the of 'SinglePivot' or 'RollingPivot' rotation log files is supported")
+    #   return NotImplemented
 
-    pivot_xml = rotation_task_xml.find(f"{self.pivot_type}/InitiateNew/CreatePivot")
-    self.diag_corr_errors_xml = pivot_xml.find("DiagonalCorrelatorFractionalErrors")
-    self.analyze_metric_xml = pivot_xml.find("AnalyzeMetric")
-    self.analyze_matrix_xml = pivot_xml.find("AnalyzeMatrix")
-    self.do_rotation_xml = rotation_task_xml.find("DoRotation")
-    self.transformation_matrix_xml = rotation_task_xml.find(f"{self.pivot_type}/InitiateNew/TransformationMatrix")
+    # pivot_xml = rotation_task_xml.find(f"{self.pivot_type}/InitiateNew/CreatePivot")
+    # self.diag_corr_errors_xml = pivot_xml.find("DiagonalCorrelatorFractionalErrors")
+    # self.analyze_metric_xml = pivot_xml.find("AnalyzeMetric")
+    # self.analyze_matrix_xml = pivot_xml.find("AnalyzeMatrix")
+    # self.do_rotation_xml = rotation_task_xml.find("DoRotation")
+    # self.transformation_matrix_xml = rotation_task_xml.find(f"{self.pivot_type}/InitiateNew/TransformationMatrix")
 
   @property
-  def metric_null_space_message(self):
-    _message = self.analyze_matrix_xml.findtext(
+  def num_rotations(self):
+    return len(self.rotation_tasks_xmls)
+
+  def pivot_type(self,index = 0):
+    # pivot_type = ""
+    # if self.rotation_tasks_xmls[index].find("SinglePivot"):
+    #   pivot_type = "SinglePivot"
+    # elif self.rotation_tasks_xmls[index].find("RollingPivot"):
+    #   pivot_type = "RollingPivot"
+    # return pivot_type
+    return self.pivot_types[index]
+  
+  def channel(self,index=0):
+    opstr = self.rotation_tasks_xmls[index].findtext(f"{self.pivot_type(index)}/InitiateNew/{self.pivot_type(index)}Initiate/CorrelatorMatrixInfo/GIOperatorString")
+    op = Operator(opstr)
+    return op.channel
+    
+  def analyze_matrix_xml(self,index = 0):
+    pivot_xml = self.rotation_tasks_xmls[index].find(f"{self.pivot_type(index)}/InitiateNew/CreatePivot")
+    analyze_matrix_xml = pivot_xml.find("AnalyzeMatrix")
+    return analyze_matrix_xml
+
+  def metric_null_space_message(self, index = 0):
+    _message = self.analyze_matrix_xml(index).findtext(
         "CheckNullSpaceCommonality/MetricNullSpace")
     if _message:
       return _message
     else:
       return "Passed"
 
-  @property
-  def diagonal_correlator_errors(self):
+  def diagonal_correlator_errors(self, index = 0):
+    pivot_xml = self.rotation_tasks_xmls[index].find(f"{self.pivot_type(index)}/InitiateNew/CreatePivot")
+    diag_corr_errors_xml = pivot_xml.find("DiagonalCorrelatorFractionalErrors")
     corr_errors = SortedDict()
-    for diag_corr_error_xml in self.diag_corr_errors_xml.iter("DiagonalCorrelator"):
+    for diag_corr_error_xml in diag_corr_errors_xml.iter("DiagonalCorrelator"):
       op_str = [xml.text for xml in diag_corr_error_xml.iter()
                 if 'Operator' in xml.tag][0]
 
@@ -98,38 +126,40 @@ class RotationLog(SigmondLog):
 
     return corr_errors
 
-  def metric_condition(self, retained=True):
+  def metric_condition(self, index = 0, retained=True):
+    pivot_xml = self.rotation_tasks_xmls[index].find(f"{self.pivot_type(index)}/InitiateNew/CreatePivot")
+    analyze_metric_xml = pivot_xml.find("AnalyzeMetric")
     if retained:
-      eigenvalues = [float(eig.text) for eig in self.analyze_metric_xml.find(
+      eigenvalues = [float(eig.text) for eig in analyze_metric_xml.find(
                                                    "MetricRetainedEigenvalues").iter("Value")]
       largest_eigenvalue = max(eigenvalues)
       smallest_eigenvalue = min(eigenvalues)
     else:
-      eigenvalues = [float(eig.text) for eig in self.analyze_metric_xml.find(
+      eigenvalues = [float(eig.text) for eig in analyze_metric_xml.find(
                                                    "MetricAllEigenvalues").iter("Value")]
       largest_eigenvalue = max(eigenvalues)
       smallest_eigenvalue = min(eigenvalues)
 
     return round(largest_eigenvalue / smallest_eigenvalue, 2)
 
-  def matrix_condition(self, retained=True):
+  def matrix_condition(self, index = 0, retained=True):
     if retained:
-      eigenvalues = [float(eig.text) for eig in self.analyze_matrix_xml.find(
+      eigenvalues = [float(eig.text) for eig in self.analyze_matrix_xml(index).find(
                                                    "GMatrixRetainedEigenvalues").iter("Value")]
       largest_eigenvalue = max(eigenvalues)
       smallest_eigenvalue = min(eigenvalues)
     else:
-      eigenvalues = [float(eig.text) for eig in self.analyze_matrix_xml.find(
+      eigenvalues = [float(eig.text) for eig in self.analyze_matrix_xml(index).find(
                                                    "GMatrixAllEigenvalues").iter("Value")]
       largest_eigenvalue = max(eigenvalues)
       smallest_eigenvalue = min(eigenvalues)
 
     return round(largest_eigenvalue / smallest_eigenvalue, 2)
 
-  @property
-  def deviations_from_zero(self):
+  def deviations_from_zero(self, index=0):
+    do_rotation_xml = self.rotation_tasks_xmls[index].find("DoRotation")
     deviations = SortedDict()
-    for rotation_xml in self.do_rotation_xml.iter("CorrelatorRotation"):
+    for rotation_xml in do_rotation_xml.iter("CorrelatorRotation"):
       time = int(rotation_xml.findtext("TimeValue"))
       status = rotation_xml.findtext("Status")
 
@@ -149,14 +179,13 @@ class RotationLog(SigmondLog):
 
     return deviations
 
-  @property
-  def number_levels(self):
-    return len(list(self.analyze_matrix_xml.find("GMatrixRetainedEigenvalues")))
+  def number_levels(self, index = 0):
+    return len(list(self.analyze_matrix_xml[index].find("GMatrixRetainedEigenvalues")))
 
-  @property
-  def improved_operators(self):
+  def improved_operators(self, index=0):
+    transformation_matrix_xml = self.rotation_tasks_xmls[index].find(f"{self.pivot_type}/InitiateNew/TransformationMatrix")
     improved_ops = list()
-    for op in self.transformation_matrix_xml.find("ImprovedOperators").iter("ImprovedOperator"):
+    for op in transformation_matrix_xml.find("ImprovedOperators").iter("ImprovedOperator"):
       op_info = list()
       op_info.append( op.find("OpName").findtext("GIOperatorString") )
       for term in op.iter("OpTerm"):
