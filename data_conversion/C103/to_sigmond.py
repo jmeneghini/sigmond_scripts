@@ -69,7 +69,14 @@ def main():
         corrs_to_average = list()
         for source in ensemble.sources:
           data_files = corr_files[replica][source][correlator]
-          correlator_data = get_data(correlator, data_files, replica_ensemble_name, ensemble.Nt, source[0], source[1])
+          try:
+            correlator_data = get_data(correlator, data_files, replica_ensemble_name, ensemble.Nt, source[0], source[1])
+          except Exception as e:
+            print(f"Failed: {e}")
+            print(f"Skipping {correlator} for source {source} on replica {replica}")
+            print()
+            return
+
           corrs_to_average.append(correlator_data)
 
         averaged_corr_data = average_data(corrs_to_average)

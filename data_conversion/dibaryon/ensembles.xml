@@ -1,6 +1,37 @@
 <KnownEnsembles>
 
   <Infos>
+     <EnsembleInfo>
+        <Id>mdwf_hisq_a15m400trMc_a</Id>
+        <NStreams>1</NStreams>
+        <NMeas>1000</NMeas>
+        <NSpace>20</NSpace>
+        <NTime>48</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
+        <Id>mdwf_hisq_a12m400trMc_a</Id>
+        <NStreams>1</NStreams>
+        <NMeas>1000</NMeas>
+        <NSpace>24</NSpace>
+        <NTime>64</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
+        <Id>mdwf_hisq_a09m400trMc_a</Id>
+        <NStreams>1</NStreams>
+        <NMeas>1000</NMeas>
+        <NSpace>32</NSpace>
+        <NTime>96</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
+        <Id>mdwf_hisq_a06m400trMc_a</Id>
+        <NStreams>1</NStreams>
+        <NMeas>1000</NMeas>
+        <NSpace>48</NSpace>
+        <NTime>144</NTime>
+     </EnsembleInfo>
 
      <EnsembleInfo>
         <Id>exp_a064_m400_mL6.4_trMc</Id>
@@ -35,7 +66,55 @@
      </EnsembleInfo>
 
      <EnsembleInfo>
+        <Id>mdwf_cls_A653</Id>
+        <NStreams>1</NStreams>
+        <NMeas>5050</NMeas>
+        <NSpace>24</NSpace>
+        <NTime>48</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
+        <Id>mdwf_cls_A653_t0.4</Id>
+        <NStreams>1</NStreams>
+        <NMeas>5050</NMeas>
+        <NSpace>24</NSpace>
+        <NTime>48</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
+        <Id>Scls_cls_A653</Id>
+        <NStreams>1</NStreams>
+        <NMeas>5050</NMeas>
+        <NSpace>24</NSpace>
+        <NTime>48</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
+        <Id>Scls_cls_A653_t0.125</Id>
+        <NStreams>1</NStreams>
+        <NMeas>5050</NMeas>
+        <NSpace>24</NSpace>
+        <NTime>48</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
         <Id>cls_B450</Id>
+        <NStreams>1</NStreams>
+        <NMeas>1612</NMeas>
+        <NSpace>32</NSpace>
+        <NTime>64</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
+        <Id>mdwf_cls_B450</Id>
+        <NStreams>1</NStreams>
+        <NMeas>1612</NMeas>
+        <NSpace>32</NSpace>
+        <NTime>64</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
+        <Id>Scls_cls_B450</Id>
         <NStreams>1</NStreams>
         <NMeas>1612</NMeas>
         <NSpace>32</NSpace>
@@ -67,6 +146,22 @@
      </EnsembleInfo>
 
      <EnsembleInfo>
+        <Id>mdwf_cls_H101_r000</Id>
+        <NStreams>1</NStreams>
+        <NMeas>1007</NMeas>
+        <NSpace>32</NSpace>
+        <NTime>96</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
+        <Id>mdwf_cls_H101</Id>
+        <NStreams>2</NStreams>
+        <NMeas>2016</NMeas>
+        <NSpace>32</NSpace>
+        <NTime>96</NTime>
+     </EnsembleInfo>
+
+     <EnsembleInfo>
         <Id>cls_H102</Id>
         <NStreams>2</NStreams>
         <NMeas>2037</NMeas>
@@ -91,9 +186,27 @@
      </EnsembleInfo>
 
      <EnsembleInfo>
+        <Id>mdwf_cls_H200</Id>
+        <NStreams>2</NStreams>
+        <NMeas>2000</NMeas>
+        <NSpace>32</NSpace>
+        <NTime>96</NTime>
+     </EnsembleInfo>
+
+     <!--
+     <EnsembleInfo>
         <Id>cls_J500</Id>
         <NStreams>1</NStreams>
         <NMeas>1341</NMeas>
+        <NSpace>64</NSpace>
+        <NTime>192</NTime>
+     </EnsembleInfo>
+     -->
+
+     <EnsembleInfo>
+        <Id>cls_J500</Id>
+        <NStreams>1</NStreams>
+        <NMeas>1875</NMeas>
         <NSpace>64</NSpace>
         <NTime>192</NTime>
      </EnsembleInfo>

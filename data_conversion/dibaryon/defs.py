@@ -1,35 +1,62 @@
 from collections import namedtuple
 
-Ensemble = namedtuple('Ensemble', ['name', 'dir_name', 'type', 'su3', 'open', 'Nt', 'replica', 'replica_str', 'modes', 'srcs', 't0', 'ts'])
+Ensemble = namedtuple('Ensemble', ['name', 'dir_name', 'type', 'su3', 'open', 'flow', 'Nt', 'replica', 'replica_str', 'modes', 'srcs', 't0', 'ts'])
 Channel = namedtuple('Channel', ['P', 'irrep', 'flavor'])
 
 # ensemble info
 ensembles = [
-    Ensemble("a064_m400_mL6.4_trMc", "a064_m400_mL6.4_trMc", 'exp', True, False, 96, ('_1','_2',), '1-2', 68, 8, 0, 40),
-    Ensemble("a094_m400_mL6.0_trMc", "a094_m400_mL6.0_trMc", 'exp', True, False, 96, ('','_ext',), 'extp', 64, 8, 0, 24),
-    Ensemble("a12_m400_mL6.0_trMc", "a12_m400_mL6.0_trMc", 'exp', True, False, 96, ('',), '', 54, 8, 0, 20),
-    Ensemble("A653", "A653", 'cls', True, False, 48, ('r000',), 'r000', 32, 4, 0, 24),
-    Ensemble("B450", "B450", 'cls', True, False, 64, ('r000',), 'r000', 32, 8, 0, 32),
-    Ensemble("B451", "B451", 'cls', False, False, 64, ('r000',), 'r000', 32, 4, 0, 32),
-    Ensemble("B452", "B452", 'cls', False, False, 64, ('r000',), 'r000', 32, 4, 0, 32),
-    Ensemble("H101", "H101", 'cls', True, True, 96, ('r000','r001',), 'r000-001', 48, 4, 0, 24),
-    Ensemble("H102", "H102", 'cls', False, True, 96, ('r001','r002',), 'r001-002', 48, 4, 0, 24),
-    Ensemble("H107", "H107", 'cls', False, True, 96, ('r000','r001','r002','r003','r004','r005'), 'r000-005', 48, 4, 0, 24),
-    Ensemble("H200", "H200", 'cls', True, True, 96, ('r000','r001'), 'r000-001', 20, 8, 0, 32),
-    Ensemble("J500", "J500", 'cls', True, True, 192, ('r004','r005'), 'r004-005', 36, 12, 0, 56),
-    Ensemble("N200", "N200", 'cls', False, True, 128, ('r000','r001'), 'r000-001', 68, 8, 0, 32),
-    Ensemble("N202", "N202", 'cls', True, True, 128, ('r001',), 'r001', 68, 8, 0, 32),
-    Ensemble("N300", "N300", 'cls', True, True, 128, ('r001','r002'), 'r001-002', 32, 12, 0, 40),
-    Ensemble("N451", "N451", 'cls', False, False, 128, ('r000',), 'r000', 108, 8, 0, 32),
-    Ensemble("U102", "U102", 'cls', False, True, 128, ('r001', 'r002',), 'r001-002', 20, 5, 0, 24),
-    Ensemble("U103", "U103", 'cls', True, True, 128, ('r001','r002','r003',), 'r001-003', 20, 5, 0, 24),
-    Ensemble("U103_60modes", "U103", 'cls', True, True, 128, ('r001','r002','r003',), 'r001-003', 60, 5, 0, 24),
-    Ensemble("U103_4", "U103", 'cls', True, True, 128, ('r001','r002','r003',), 'r001-003', 20, 5, 0, 24),
-    Ensemble("E1", "E1", 'cls', True, False, 64, ('',), '', 30, 8, 0, 32),
-    Ensemble("E5", "E5_SU3", 'cls', True, False, 64, ('f', 'g',), 'fg', 30, 4, 0, 32),
+    Ensemble("Scls_cls_A653", "A653", 'Scls_cls', True, False, 'flow_t1.0', 48, ('r000',), 'r000', 32, 8, 0, 24),
+    Ensemble("Scls_cls_A653_t0.125", "A653", 'Scls_cls', True, False, 'flow_t0.125', 48, ('r000',), 'r000', 32, 8, 0, 24),
+    Ensemble("Scls_cls_B450", "B450", 'Scls_cls', True, False, 'flow_t1.0', 64, ('r000',), 'r000', 32, 8, 0, 32),
+    Ensemble("mdwf_cls_A653", "A653", 'mdwf_cls', True, False, 'flow_t1.0', 48, ('r000',), 'r000', 32, 8, 0, 24),
+    Ensemble("mdwf_cls_A653_t0.4", "A653", 'mdwf_cls', True, False, 'flow_t0.4', 48, ('r000',), 'r000', 32, 8, 0, 24),
+    Ensemble("mdwf_cls_B450", "B450", 'mdwf_cls', True, False, 'flow_t1.0', 64, ('r000',), 'r000', 32, 8, 0, 32),
+    Ensemble("mdwf_cls_H101_r000", "H101", 'mdwf_cls', True, True, 'flow_t1.0', 96, ('r000',), 'r000', 48, 4, 0, 32),
+    Ensemble("mdwf_cls_H101", "H101", 'mdwf_cls', True, True, 'flow_t1.0', 96, ('r000','r001',), 'r000-001', 48, 4, 0, 24),
+    Ensemble("mdwf_hisq_a15m400trMc_a", "a15m400trMc_a", 'mdwf_hisq', True, False, 'flow_t1.0', 48, ('',), '', 60, 8, 0, 16),
+    Ensemble("mdwf_hisq_a12m400trMc_a", "a12m400trMc_a", 'mdwf_hisq', True, False, 'flow_t1.0', 64, ('',), '', 54, 8, 0, 20),
+    Ensemble("mdwf_hisq_a09m400trMc_a", "a09m400trMc_a", 'mdwf_hisq', True, False, 'flow_t1.0', 96, ('',), '', 54, 8, 0, 28),
+    Ensemble("mdwf_hisq_a06m400trMc_a", "a06m400trMc_a", 'mdwf_hisq', True, False, 'flow_t1.0', 144, ('',), '', 46, 8, 0, 44),
+    Ensemble("exp_a064_m400_mL6.4_trMc", "a064_m400_mL6.4_trMc", 'exp', True, False, '', 96, ('_1','_2',), '1-2', 68, 8, 0, 40),
+    Ensemble("exp_a094_m400_mL6.0_trMc", "a094_m400_mL6.0_trMc", 'exp', True, False, '', 96, ('','_ext',), 'extp', 64, 8, 0, 24),
+    Ensemble("exp_a12_m400_mL6.0_trMc", "a12_m400_mL6.0_trMc", 'exp', True, False, '', 96, ('',), '', 54, 8, 0, 20),
+    Ensemble("cls_A653", "A653", 'cls', True, False, '', 48, ('r000',), 'r000', 32, 4, 0, 24),
+    Ensemble("cls_B450", "B450", 'cls', True, False, '', 64, ('r000',), 'r000', 32, 8, 0, 32),
+    Ensemble("cls_B451", "B451", 'cls', False, False, '', 64, ('r000',), 'r000', 32, 4, 0, 32),
+    Ensemble("cls_B452", "B452", 'cls', False, False, '', 64, ('r000',), 'r000', 32, 4, 0, 32),
+    Ensemble("cls_H101", "H101", 'cls', True, True, '', 96, ('r000','r001',), 'r000-001', 48, 4, 0, 24),
+    Ensemble("cls_H102", "H102", 'cls', False, True, '', 96, ('r001','r002',), 'r001-002', 48, 4, 0, 24),
+    Ensemble("cls_H107", "H107", 'cls', False, True, '', 96, ('r000','r001','r002','r003','r004','r005'), 'r000-005', 48, 4, 0, 24),
+    Ensemble("cls_H200", "H200", 'cls', True, True, '', 96, ('r000','r001'), 'r000-001', 20, 8, 0, 32),
+    Ensemble("mdwf_cls_H200", "H200", 'mdwf_cls', True, True, 'flow_t1.0', 96, ('r000','r001'), 'r000-001', 20, 8, 0, 32),
+    #Ensemble("cls_J500", "J500", 'cls', True, True, '', 192, ('r004','r005'), 'r004-005', 36, 12, 0, 56),
+    Ensemble("cls_J500", "J500_sm2", 'cls', True, True, '', 192, ('r004','r005','r006'), 'r004-006', 36, 12, 0, 56),
+    Ensemble("cls_N200", "N200", 'cls', False, True, '', 128, ('r000','r001'), 'r000-001', 68, 8, 0, 32),
+    Ensemble("cls_N202", "N202", 'cls', True, True, '', 128, ('r001',), 'r001', 68, 8, 0, 32),
+    Ensemble("cls_N300", "N300", 'cls', True, True, '', 128, ('r001','r002'), 'r001-002', 32, 12, 0, 40),
+    Ensemble("cls_N451", "N451", 'cls', False, False, '', 128, ('r000',), 'r000', 108, 8, 0, 32),
+    Ensemble("cls_U102", "U102", 'cls', False, True, '', 128, ('r001', 'r002',), 'r001-002', 20, 5, 0, 24),
+    Ensemble("cls_U103", "U103", 'cls', True, True, '', 128, ('r001','r002','r003',), 'r001-003', 20, 5, 0, 24),
+    #Ensemble("cls_U103", "U103_60modes", "U103", 'cls', True, True, '', 128, ('r001','r002','r003',), 'r001-003', 60, 5, 0, 24),
+    #Ensemble("cls_U103", "U103_4", "U103", 'cls', True, True, '', 128, ('r001','r002','r003',), 'r001-003', 20, 5, 0, 24),
+    Ensemble("cls_E1", "E1", 'cls', True, False, '', 64, ('',), '', 30, 8, 0, 32),
+    Ensemble("cls_E5", "E5_SU3", 'cls', True, False, '', 64, ('f', 'g',), 'fg', 30, 4, 0, 32),
 ]
 
 backward_prop_skip = {
+    'Scls_cls_A653': [],
+    'Scls_cls_A653_t0.125': [],
+    'Scls_cls_B450': [],
+    'mdwf_cls_A653': [],
+    'mdwf_cls_A653_t0.4': [],
+    'mdwf_cls_B450': [],
+    'mdwf_cls_H101_r000': [0],
+    'mdwf_cls_H101': [0],
+    'mdwf_cls_H200': [0,1,2,3],
+    'a15m400trMc_a': [],
+    'a12m400trMc_a': [],
+    'a09m400trMc_a': [],
+    'a06m400trMc_a': [],
     'a064_m400_mL6.4_trMc': [],
     'a094_m400_mL6.0_trMc': [],
     'a12_m400_mL6.0_trMc': [],
@@ -55,6 +82,19 @@ backward_prop_skip = {
 }
 
 forward_prop_skip = {
+    'Scls_cls_A653': [],
+    'Scls_cls_A653_t0.125': [],
+    'Scls_cls_B450': [],
+    'mdwf_cls_A653': [],
+    'mdwf_cls_A653_t0.4': [],
+    'mdwf_cls_B450': [],
+    'mdwf_cls_H101_r000': [3],
+    'mdwf_cls_H101': [3],
+    'mdwf_cls_H200': [4,5,6,7],
+    'a15m400trMc_a': [],
+    'a12m400trMc_a': [],
+    'a09m400trMc_a': [],
+    'a06m400trMc_a': [],
     'a064_m400_mL6.4_trMc': [],
     'a094_m400_mL6.0_trMc': [],
     'a12_m400_mL6.0_trMc': [],
@@ -80,6 +120,19 @@ forward_prop_skip = {
 }
 
 pseudoscalar_backward_prop_skip = {
+    'Scls_cls_A653': [],
+    'Scls_cls_A653_t0.125': [],
+    'Scls_cls_B450': [],
+    'mdwf_cls_A653': [],
+    'mdwf_cls_A653_t0.4': [],
+    'mdwf_cls_B450': [],
+    'mdwf_cls_H101_r000': [0,1],
+    'mdwf_cls_H101': [0,1],
+    'mdwf_cls_H200': [0,1,2,3,4,5],
+    'a15m400trMc_a': [],
+    'a12m400trMc_a': [],
+    'a09m400trMc_a': [],
+    'a06m400trMc_a': [],
     'a064_m400_mL6.4_trMc': [],
     'a094_m400_mL6.0_trMc': [],
     'a12_m400_mL6.0_trMc': [],
@@ -105,6 +158,19 @@ pseudoscalar_backward_prop_skip = {
 }
 
 pseudoscalar_forward_prop_skip = {
+    'Scls_cls_A653': [],
+    'Scls_cls_A653_t0.125': [],
+    'Scls_cls_B450': [],
+    'mdwf_cls_A653': [],
+    'mdwf_cls_A653_t0.4': [],
+    'mdwf_cls_B450': [],
+    'mdwf_cls_H101_r000': [2,3],
+    'mdwf_cls_H101': [2,3],
+    'mdwf_cls_H200': [2,3,4,5,6,7],
+    'a15m400trMc_a': [],
+    'a12m400trMc_a': [],
+    'a09m400trMc_a': [],
+    'a06m400trMc_a': [],
     'a064_m400_mL6.4_trMc': [],
     'a094_m400_mL6.0_trMc': [],
     'a12_m400_mL6.0_trMc': [],
@@ -131,6 +197,19 @@ pseudoscalar_forward_prop_skip = {
 
 
 pseudoscalar_modes = {
+    'Scls_cls_A653': 32,
+    'Scls_cls_A653_t0.125': 32,
+    'Scls_cls_B450': 32,
+    'mdwf_cls_A653': 32,
+    'mdwf_cls_A653_t0.4': 32,
+    'mdwf_cls_B450': 32,
+    'mdwf_cls_H101_r000': 48,
+    'mdwf_cls_H101': 48,
+    'mdwf_cls_H200': 20,
+    'a15m400trMc_a': 60,
+    'a12m400trMc_a': 54,
+    'a09m400trMc_a': 54,
+    'a06m400trMc_a': 46,
     'a064_m400_mL6.4_trMc': 68,
     'a094_m400_mL6.0_trMc': 64,
     'a12_m400_mL6.0_trMc': 54,
@@ -156,6 +235,19 @@ pseudoscalar_modes = {
 }
 
 pseudoscalar_sources = {
+    'Scls_cls_A653': [0, 0, 0, 0, 0, 0, 0, 0],
+    'Scls_cls_A653_t0.125': [0, 0, 0, 0, 0, 0, 0, 0],
+    'Scls_cls_B450': [0, 0, 0, 0, 0, 0, 0, 0],
+    'mdwf_cls_A653': [0, 0, 0, 0, 0, 0, 0, 0],
+    'mdwf_cls_A653_t0.4': [0, 0, 0, 0, 0, 0, 0, 0],
+    'mdwf_cls_B450': [0, 0, 0, 0, 0, 0, 0, 0],
+    'mdwf_cls_H101_r000': [0, 0, 0, 0],
+    'mdwf_cls_H101': [0, 0, 0, 0],
+    'mdwf_cls_H200': [0, 0, 0, 0, 0, 0, 0, 0],
+    'a15m400trMc_a': [0, 0, 0, 0, 0, 0, 0, 0],
+    'a12m400trMc_a': [0, 0, 0, 0, 0, 0, 0, 0],
+    'a09m400trMc_a': [0, 0, 0, 0, 0, 0, 0, 0],
+    'a06m400trMc_a': [0, 0, 0, 0, 0, 0, 0, 0],
     'a064_m400_mL6.4_trMc': [0, 0, 0, 0, 0, 0, 0, 0],
     'a094_m400_mL6.0_trMc': [0, 0, 0, 0, 0, 0, 0, 0],
     'a12_m400_mL6.0_trMc': [0, 0, 0, 0, 0, 0, 0, 0],
@@ -181,6 +273,19 @@ pseudoscalar_sources = {
 }
 
 pseudoscalar_names = {
+    'Scls_cls_A653': ['ps'],
+    'Scls_cls_A653_t0.125': ['ps'],
+    'Scls_cls_B450': ['ps'],
+    'mdwf_cls_A653': ['ps'],
+    'mdwf_cls_A653_t0.4': ['ps'],
+    'mdwf_cls_B450': ['ps'],
+    'mdwf_cls_H101_r000': ['ps'],
+    'mdwf_cls_H101': ['ps'],
+    'mdwf_cls_H200': ['ps'],
+    'a15m400trMc_a': ['ps'],
+    'a12m400trMc_a': ['ps'],
+    'a09m400trMc_a': ['ps'],
+    'a06m400trMc_a': ['ps'],
     'a064_m400_mL6.4_trMc': ['ps'],
     'a094_m400_mL6.0_trMc': ['ps'],
     'a12_m400_mL6.0_trMc': ['ps'],
@@ -206,6 +311,45 @@ pseudoscalar_names = {
 }
 
 pseudoscalar_op_strs = {
+    'Scls_cls_A653': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'Scls_cls_A653_t0.125': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'Scls_cls_B450': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'mdwf_cls_A653': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'mdwf_cls_A653_t0.4': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'mdwf_cls_B450': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'mdwf_cls_H101_r000': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'mdwf_cls_H101': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'mdwf_cls_H200': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'a15m400trMc_a': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'a12m400trMc_a': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'a09m400trMc_a': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
+    'a06m400trMc_a': {
+      'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
+    },
     'a064_m400_mL6.4_trMc': {
       'ps': "Flavor=1,0 Pref=(0,0,0) A1um pion 0",
     },
@@ -297,6 +441,19 @@ tsrc_files = {
 }
 
 decuplet_ensembles = [
+    'Scls_cls_A653',
+    'Scls_cls_A653_t0.125',
+    'Scls_cls_B450',
+    'mdwf_cls_A653',
+    'mdwf_cls_A653_t0.4',
+    'mdwf_cls_B450',
+    'mdwf_cls_H101_r000',
+    'mdwf_cls_H101',
+    'mdwf_cls_H200',
+    'a15m400trMc_a',
+    'a12m400trMc_a',
+    'a09m400trMc_a',
+    'a06m400trMc_a',
     'a064_m400_mL6.4_trMc',
     'a12_m400_mL6.0_trMc',
     'A653',

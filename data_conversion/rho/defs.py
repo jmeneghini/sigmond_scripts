@@ -15,15 +15,15 @@ parity_name = {
 }
 
 ensembles = [
-    #Ensemble(
-    #  "cls21_d200",
-    #  128, 
-    #  ['r000'],
-    #  [
-    #    (35, True),
-    #    (92, False),
-    #  ]
-    #),
+    Ensemble(
+      "cls21_d200",
+      128, 
+      ['r000'],
+      [
+      #  (35, True),
+        (92, False),
+      ]
+    ),
     #Ensemble(
     #  "cls21_j303",
     #  192, 
@@ -35,17 +35,17 @@ ensembles = [
     #    (144, False),
     #  ]
     #),
-    Ensemble(
-      "cls21_e250",
-      192, 
-      ['r001'],
-      [
-        (0, True), (0, False),
-        (1, True), (1, False),
-        (2, True), (2, False),
-        (3, True), (3, False),
-      ]
-    ),
+    #Ensemble(
+    #  "cls21_e250",
+    #  192, 
+    #  ['r001'],
+    #  [
+    #    (0, True), (0, False),
+    #    (1, True), (1, False),
+    #    (2, True), (2, False),
+    #    (3, True), (3, False),
+    #  ]
+    #),
 ]
 
 source_lists = {}

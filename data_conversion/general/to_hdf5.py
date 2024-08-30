@@ -17,7 +17,7 @@ import sys
 sys.path.insert(1, "../../analysis/")
 import operator_info.operator
 
-ensembles_to_do = ["N203"]
+ensembles_to_do = ["D200"]
 
 def main():
   parser = argparse.ArgumentParser(description="Convert general data")

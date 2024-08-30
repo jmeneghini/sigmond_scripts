@@ -13,7 +13,7 @@ import defs
 
 FORCE_HERM = True
 
-base_data_dir = "/disk3/research/data/dibaryon_correlators/"
+base_data_dir = "/disk4/research/data/dibaryon_correlators/"
 output_dir = "data"
 
 #ensembles_to_do = ["A653", "B450", "B451", "B452", "H101", "H200", "J500", "N200", "N202", "N300", "U102", "U103", "E1", "E5"]
@@ -21,7 +21,7 @@ output_dir = "data"
 #ensembles_to_do = ["N451"]
 #ensembles_to_do = ["a064_m400_mL6.4_trMc", "a094_m400_mL6.0_trMc", "a12_m400_mL6.0_trMc"]
 #ensembles_to_do = ["A653", "B450", "B451", "B452", "H101", "H102", "H107", "H200", "J500", "N200", "N202", "N300", "N451", "U102", "U103", "E1", "E5"]
-ensembles_to_do = ["U102", "U103", "E1", "E5"]
+ensembles_to_do = ["mdwf_cls_H200"]
 
 particle_map = {
     'Σ': 'S',
@@ -45,12 +45,15 @@ def main():
 
     print(f"Processing ensemble {ensemble.name}")
     try:
+      '''
       convert_dibaryons(ensemble, dibaryon_ops)
       convert_baryons(ensemble)
       if ensemble.name in defs.decuplet_ensembles:
         convert_decuplet(ensemble)
+      '''
 
       convert_pseudoscalar(ensemble)
+
     except Exception as e:
       print("Exception:")
       print("\tEnsemble: {}".format(ensemble.name))
@@ -65,7 +68,6 @@ def read_op_files():
       pref_str = None
       pref_key = None
       irrep_key = None
-      irrep_str = None
       for line in fh:
         line = line.rstrip()
         whitespace = len(line) - len(line.lstrip())
@@ -83,7 +85,6 @@ def read_op_files():
             op_data[flavor][pref_key] = dict()
 
           irrep_key = irrep.strip()
-          irrep_str = defs.convert_irrep(irrep_key, psq)
           op_data[flavor][pref_key][irrep_key] = list()
 
         elif whitespace == 3:
@@ -119,7 +120,6 @@ def read_op_files():
         pref_str = f"Pref=({pref[1]},{pref[2]},{pref[3]})"
         op_data[flavor][pref] = dict()
         for irrep, irrep_spin_strs in irreps.items():
-          irrep_str = defs.convert_irrep(irrep, psq)
           op_data[flavor][pref][irrep] = list()
           for irrep_spin_str in irrep_spin_strs:
             symmetric_op_str = f"{defs.symmetric_SU3_flavor_dibaryon}_{irrep_spin_str}"
@@ -138,14 +138,23 @@ def read_op_files():
   return op_data
 
 def convert_dibaryons(ensemble, ops):
-  ensemble_info = sig.MCEnsembleInfo(f"{ensemble.type}_{ensemble.name}", 'ensembles.xml')
+  ensemble_info = sig.MCEnsembleInfo(f"{ensemble.name}", 'ensembles.xml')
   bins_info = sig.MCBinsInfo(ensemble_info)
   sampling_info = sig.MCSamplingInfo()
   xml_obs = sig.XMLHandler("MCObservables", "")
   obs_get_handler = sig.MCObsGetHandler(xml_obs, bins_info, sampling_info)
   obs_handler = sig.MCObsHandler(obs_get_handler, False)
 
-  raw_data_dir = os.path.join(base_data_dir, f"{ensemble.dir_name}")
+  if ensemble.type == "exp":
+    raw_data_dir = os.path.join(base_data_dir, "expClover", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "mdwf_hisq":
+    raw_data_dir = os.path.join(base_data_dir, "mdwf_hisq", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "mdwf_cls":
+    raw_data_dir = os.path.join(base_data_dir, "mdwf_cls", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "Scls_cls":
+    raw_data_dir = os.path.join(base_data_dir, "Scls_cls", ensemble.flow, f"{ensemble.dir_name}")
+  else:
+    raw_data_dir = os.path.join(base_data_dir, f"{ensemble.dir_name}")
   
   flavors = defs.SU3_flavors if ensemble.su3 else defs.SU2_flavors
 
@@ -162,7 +171,7 @@ def convert_dibaryons(ensemble, ops):
 
       data_file = os.path.join(raw_data_dir, data_filename)
       if not os.path.isfile(data_file):
-        data_filename = f"{ensemble.name}{replica}_SU3_{ensemble.modes}modes.hdf5"
+        data_filename = f"{ensemble.dir_name}{replica}_SU3_{ensemble.modes}modes.hdf5"
         data_file = os.path.join(raw_data_dir, data_filename)
 
       data_handler = h5py.File(data_file, 'r')
@@ -243,7 +252,17 @@ def convert_dibaryons(ensemble, ops):
 
 
 def convert_baryons(ensemble):
-  data_dir = os.path.join(base_data_dir, f"{ensemble.dir_name}")
+  if ensemble.type == "exp":
+    data_dir = os.path.join(base_data_dir, "expClover", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "mdwf_hisq":
+    data_dir = os.path.join(base_data_dir, "mdwf_hisq", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "mdwf_cls":
+    data_dir = os.path.join(base_data_dir, "mdwf_cls", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "Scls_cls":
+    data_dir = os.path.join(base_data_dir, "Scls_cls", ensemble.flow, f"{ensemble.dir_name}")
+  else:
+    data_dir = os.path.join(base_data_dir, f"{ensemble.dir_name}")
+
   data_handlers = list()
   datasets = list()
   for replica in ensemble.replica:
@@ -251,10 +270,11 @@ def convert_baryons(ensemble):
     data_file = os.path.join(data_dir, data_filename)
     if not os.path.isfile(data_file):
       if ensemble.type == "exp":
-        data_filename = f"{ensemble.name}{replica}_{ensemble.modes}modes_dibaryon.hdf5"
+        data_filename = f"{ensemble.dir_name}{replica}_{ensemble.modes}modes_dibaryon.hdf5"
         data_file = os.path.join(data_dir, data_filename)
       elif ensemble.su3:
-        data_filename = f"{ensemble.name}{replica}_{ensemble.modes}modes_baryon.hdf5"
+        #data_filename = f"{ensemble.dir_name}{replica}_{ensemble.modes}modes_baryon.hdf5"
+        data_filename = f"{ensemble.dir_name}{replica}_{ensemble.modes}modes.hdf5"
         data_file = os.path.join(data_dir, data_filename)
       else:
         data_filename = f"{ensemble.dir_name}{replica}_{ensemble.modes}modes_S-2.hdf5"
@@ -270,7 +290,7 @@ def convert_baryons(ensemble):
     flavors = list(map(lambda x: x.decode('utf-8'), f_handler['baryons'][:]))
     num_flavors = len(flavors)
 
-  ensemble_info = sig.MCEnsembleInfo(f"{ensemble.type}_{ensemble.name}", 'ensembles.xml')
+  ensemble_info = sig.MCEnsembleInfo(f"{ensemble.name}", 'ensembles.xml')
   bins_info = sig.MCBinsInfo(ensemble_info)
   sampling_info = sig.MCSamplingInfo()
   xml_obs = sig.XMLHandler("MCObservables", "")
@@ -323,7 +343,17 @@ def convert_baryons(ensemble):
 
 
 def convert_decuplet(ensemble):
-  data_dir = os.path.join(base_data_dir, f"{ensemble.dir_name}")
+  if ensemble.type == "exp":
+    data_dir = os.path.join(base_data_dir, "expClover", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "mdwf_hisq":
+    data_dir = os.path.join(base_data_dir, "mdwf_hisq", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "mdwf_cls":
+    data_dir = os.path.join(base_data_dir, "mdwf_cls", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "Scls_cls":
+    data_dir = os.path.join(base_data_dir, "Scls_cls", ensemble.flow, f"{ensemble.dir_name}")
+  else:
+    data_dir = os.path.join(base_data_dir, f"{ensemble.dir_name}")
+
   data_handlers = list()
   datasets = list()
   for replica in ensemble.replica:
@@ -336,7 +366,7 @@ def convert_decuplet(ensemble):
   flavor_name = "decuplet"
   num_flavors = 1 if ensemble.su3 else 4
 
-  ensemble_info = sig.MCEnsembleInfo(f"{ensemble.type}_{ensemble.name}", 'ensembles.xml')
+  ensemble_info = sig.MCEnsembleInfo(f"{ensemble.name}", 'ensembles.xml')
   bins_info = sig.MCBinsInfo(ensemble_info)
   sampling_info = sig.MCSamplingInfo()
   xml_obs = sig.XMLHandler("MCObservables", "")
@@ -390,7 +420,17 @@ def convert_decuplet(ensemble):
 
 
 def convert_pseudoscalar(ensemble):
-  data_dir = os.path.join(base_data_dir, f"{ensemble.dir_name}")
+  if ensemble.type == "exp":
+    data_dir = os.path.join(base_data_dir, "expClover", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "mdwf_hisq":
+    data_dir = os.path.join(base_data_dir, "mdwf_hisq", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "mdwf_cls":
+    data_dir = os.path.join(base_data_dir, "mdwf_cls", ensemble.flow, f"{ensemble.dir_name}")
+  elif ensemble.type == "Scls_cls":
+    data_dir = os.path.join(base_data_dir, "Scls_cls", ensemble.flow, f"{ensemble.dir_name}")
+  else:
+    data_dir = os.path.join(base_data_dir, f"{ensemble.dir_name}")
+
   data_handlers = list()
   tsrc_list = dict()
   datasets = dict()
@@ -401,7 +441,7 @@ def convert_pseudoscalar(ensemble):
     data_filename = f"{ensemble.dir_name}{replica}_{defs.pseudoscalar_modes[ensemble.name]}modes_pseudoscalar.hdf5"
     data_file = os.path.join(data_dir, data_filename)
     if not os.path.isfile(data_file) and ensemble.su3:
-      data_filename = f"{ensemble.name}{replica}_{defs.pseudoscalar_modes[ensemble.name]}modes_pseudoscalar.hdf5"
+      data_filename = f"{ensemble.dir_name}{replica}_{defs.pseudoscalar_modes[ensemble.name]}modes_pseudoscalar.hdf5"
       data_file = os.path.join(data_dir, data_filename)
 
     f_handler = h5py.File(data_file, 'r')
@@ -417,7 +457,7 @@ def convert_pseudoscalar(ensemble):
           conf, tsrc = line.split()
           tsrc_list[rep_num][int(conf)-1] = int(tsrc)
 
-  ensemble_info = sig.MCEnsembleInfo(f"{ensemble.type}_{ensemble.name}", 'ensembles.xml')
+  ensemble_info = sig.MCEnsembleInfo(f"{ensemble.name}", 'ensembles.xml')
   bins_info = sig.MCBinsInfo(ensemble_info)
   sampling_info = sig.MCSamplingInfo()
   xml_obs = sig.XMLHandler("MCObservables", "")
