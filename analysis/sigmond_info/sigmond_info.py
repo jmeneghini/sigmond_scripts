@@ -223,16 +223,16 @@ class ScatteringParticle:
       name, arg = particle.split('(')
       if '_' in arg:
         momentum, irrep = arg.split('_')
+        irrep = irrep[:-1]
       else:
         momentum = arg
+        momentum = momentum[:-1]
         irrep = None
 
-      momentum = momentum[:-1]
 
       if ',' in momentum:
-        ref = False
+        ref = True
         momentum = tuple(sorted([abs(int(pi)) for pi in momentum.split(',')]))
-        momentum = momentum[0]**2 + momentum[1]**2 + momentum[2]**2
       else:
         ref = False
         momentum = int(momentum)
@@ -251,13 +251,18 @@ class ScatteringParticle:
 
   def __str__(self):
     _str = self.name
+    '''
     if self.ref:
-      _str += f"({self.momentum[0]},{self.momentum[1]},{self.momentum[2]})"
+      _str += f"({self.momentum[0]},{self.momentum[1]},{self.momentum[2]}"
     else:
-      _str += f"({self.momentum})"
+      _str += f"({self.momentum}"
+    '''
+    _str += f"({self.psq}"
 
     if self.irrep is not None:
-      _str += f"_{self.irrep})"
+      _str += f"_{self.irrep}"
+
+    _str += ")"
 
     return _str
 

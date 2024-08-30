@@ -28,9 +28,20 @@ ERR_PREC=2
 class Singleton(type):
   _instances = {}
   def __call__(cls, *args, **kwargs):
-    if cls not in cls._instances:
+    new_instance = False
+    if 'new_instance' in kwargs:
+      new_instance = kwargs['new_instance']
+      del kwargs['new_instance']
+
+    if new_instance:
+      ret_class = super(Singleton, cls).__call__(*args, **kwargs)
+    elif cls not in cls._instances:
       cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-    return cls._instances[cls]
+      ret_class = cls._instances[cls]
+    else:
+      ret_class = cls._instances[cls]
+
+    return ret_class
 
 #########################################################################################
 # For creating nice looking errors on results

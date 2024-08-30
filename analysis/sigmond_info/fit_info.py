@@ -351,7 +351,7 @@ class FitInfo:
     if self.exclude_times:
       ET.SubElement(xml, "ExcludeTimes").text = " ".join(str(t) for t in self.exclude_times)
 
-    if self.noise_cutoff and not self.is_tmin_vary and not self.is_tmax_vary:
+    if self.noise_cutoff:
       ET.SubElement(xml, "LargeTimeNoiseCutoff").text = str(self.noise_cutoff)
 
     if self.is_log_fit:
