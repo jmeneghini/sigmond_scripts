@@ -155,6 +155,18 @@ class DataHandler(metaclass=util.Singleton):
       return self._raw_data.getChannelOperators(channel)
 
     return SortedSet()
+
+  def getChannelOperators2(self, channel): # rotated first
+    if channel in self.rotated_channels:
+      return self._rotated_data.getChannelOperators(channel)
+
+    elif channel in self.averaged_channels:
+      return self._averaged_data.getChannelOperators(channel)
+
+    elif channel in self.raw_channels:
+      return self._raw_data.getChannelOperators(channel)
+
+    return SortedSet()
   
   def getAveragedOperators(self, channel):
     if channel in self.averaged_channels:
@@ -422,7 +434,8 @@ class DataHandler(metaclass=util.Singleton):
         data.addCorrelator(corr, t, t, fileinfo)
 
       elif mc_obs.isVEV():
-        data.addVEV(vev, fileinfo)
+        vev_info = mc_obs.getVEVInfo()
+        data.addVEV(vev_info, fileinfo)
 
       else:
         logging.warning(f"Ignoring observable '{mc_obs}'")
