@@ -108,7 +108,7 @@ FIT_MODEL_SIGMOND = {
     FitModel.TimeForwardSingleExponential: sigmond.TimeForwardSingleExponential,
     FitModel.TimeSymSingleExponential: sigmond.TimeSymSingleExponential,
     # FitModel.TimeForwardSingleExponentialPlusConstant: "1-exp-const",
-    # FitModel.TimeSymSingleExponentialPlusConstant: "1-exp-sym-const",
+    FitModel.TimeSymSingleExponentialPlusConstant: sigmond.TimeSymSingleExponentialPlusConstant,
     FitModel.TimeForwardTwoExponential: sigmond.TimeForwardTwoExponential,
     # FitModel.TimeSymTwoExponential: "2-exp-sym",
     # FitModel.TimeForwardTwoExponentialPlusConstant: "2-exp-const",
