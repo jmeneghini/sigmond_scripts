@@ -13,8 +13,14 @@ import numpy as np
 import sigmond_scripts.sigmond_info as sigmond_info
 import sigmond_scripts.fit_info as fit_info_lib
 import sigmond_scripts.util as util
+from sigmond_scripts.operator import Operator
 
 import sigmond
+
+
+def _op_string_tag(op_str):
+  """Pick the right SigMonD XML tag for an operator string based on its kind."""
+  return "GIOperatorString" if Operator.operator_type(op_str) is sigmond.OpKind.GenIrrep else "BLOperatorString"
 
 
 class SigmondInput:
@@ -819,47 +825,43 @@ class SigmondInput:
       ET.SubElement(pivot_init_tag, "AssignName").text = extra_options['pivot_name']
     #pivot_init_tag.append(correlator_matrix.xml())
     
-    if 'improved_ops' in extra_options:
-      if extra_options['improved_ops']:
-        #make list of replacements
-        ops_to_replace = list()
-        replacements = list()
-        for improved_op_set in extra_options['improved_ops']:
-          for improved_op in improved_op_set:
-            replacements.append(improved_op[0])
-          for i in range(1,len(improved_op_set[0]),2):
-            ops_to_replace.append(improved_op_set[0][i])
-          if len(ops_to_replace)!=len(replacements):
-            logging.warning("Mismatch in improved operators")
-            ops_to_replace = list()
-            replacements = list()
-      
-        #make replacements in correlator matrix
-        improved_correlator_matrix = correlator_matrix.xml()
-        for child in improved_correlator_matrix.findall('GIOperatorString'):
-          for i, (op) in enumerate(ops_to_replace):
-            if child.text==op:
-              child.text = replacements[i]
-        pivot_init_tag.append(improved_correlator_matrix)
-      else:
-        pivot_init_tag.append(correlator_matrix.xml())
+    if 'improved_ops' in extra_options and extra_options['improved_ops']:
+      ops_to_replace = list()
+      replacements = list()
+      for improved_op_set in extra_options['improved_ops']:
+        set_replacements = [improved_op[0] for improved_op in improved_op_set]
+        set_ops_to_replace = [improved_op_set[0][i] for i in range(1, len(improved_op_set[0]), 2)]
+        if len(set_ops_to_replace) != len(set_replacements):
+          logging.warning("Mismatch in improved operators")
+          continue
+        ops_to_replace.extend(set_ops_to_replace)
+        replacements.extend(set_replacements)
+
+      #make replacements in correlator matrix (may be BL or GI)
+      improved_correlator_matrix = correlator_matrix.xml()
+      for child in list(improved_correlator_matrix):
+        if child.tag not in ("BLOperatorString", "GIOperatorString"):
+          continue
+        for op_old, op_new in zip(ops_to_replace, replacements):
+          if child.text == op_old:
+            child.tag = _op_string_tag(op_new)
+            child.text = op_new
+            break
+      pivot_init_tag.append(improved_correlator_matrix)
+
+      #add improved operators to pivot
+      improved_ops_tag = ET.SubElement(pivot_init_tag, "ImprovedOperators")
+      for improved_op_set in extra_options['improved_ops']:
+        for improved_op in improved_op_set:
+          improved_op_tag = ET.SubElement(improved_ops_tag, "ImprovedOperator")
+          opname_tag = ET.SubElement(improved_op_tag, "OpName")
+          ET.SubElement(opname_tag, _op_string_tag(improved_op[0])).text = improved_op[0]
+          for i in range(1, len(improved_op), 2):
+            opterm_tag = ET.SubElement(improved_op_tag, "OpTerm")
+            ET.SubElement(opterm_tag, _op_string_tag(improved_op[i])).text = improved_op[i]
+            ET.SubElement(opterm_tag, "Coefficient").text = improved_op[i+1]
     else:
       pivot_init_tag.append(correlator_matrix.xml())
-
-    if 'improved_ops' in extra_options:
-      if extra_options['improved_ops']:
-
-        #add improved operators to pivot
-        improved_ops_tag = ET.SubElement(pivot_init_tag, "ImprovedOperators")
-        for improved_op_set in extra_options['improved_ops']:
-          for improved_op in improved_op_set:
-            improved_op_tag = ET.SubElement(improved_ops_tag,"ImprovedOperator")
-            opname_tag = ET.SubElement(improved_op_tag, "OpName")
-            ET.SubElement(opname_tag, "GIOperatorString").text = improved_op[0]
-            for i in range(1,len(improved_op),2):
-              opterm_tag = ET.SubElement(improved_op_tag, "OpTerm")
-              ET.SubElement(opterm_tag, "GIOperatorString").text = improved_op[i]
-              ET.SubElement(opterm_tag, "Coefficient").text = improved_op[i+1]
 
 
     if pivot_info.pivot_type is sigmond_info.PivotType.SinglePivot:
