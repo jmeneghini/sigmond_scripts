@@ -1,13 +1,11 @@
 import xml.etree.ElementTree as ET
 import logging
-from typing import NamedTuple
 from sortedcontainers import SortedSet
 from aenum import MultiValueEnum
 import regex
 
 import sigmond
 import sigmond_scripts.util as util
-import sigmond_scripts.operator
 
 
 
@@ -394,7 +392,6 @@ class FitInfo:
       for pos, digit in enumerate(excludes_time_str):
         if digit == "0" and pos + 1 < len(excludes_time_str) and excludes_time_str[pos+1] != "0":
           exclude_times.add(int(current_time))
-          current_time = ""
         else:
           exclude_time += digit
 
@@ -458,7 +455,7 @@ class FitInfo:
       _fit_type = f"{_fit_type}TmaxVary"
 
     if self.sim_fit:
-      _fit_type = f"NSimTemporalCorrelator"
+      _fit_type = "NSimTemporalCorrelator"
     
     return _fit_type
 

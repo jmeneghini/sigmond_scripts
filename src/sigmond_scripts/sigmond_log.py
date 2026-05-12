@@ -1,11 +1,10 @@
-import os
 import logging
 import xml.etree.ElementTree as ET
 from abc import ABCMeta, abstractmethod
 import regex
 
 from typing import NamedTuple
-from sortedcontainers import SortedSet, SortedDict
+from sortedcontainers import SortedDict
 
 import sigmond
 import sigmond_scripts.util as util
@@ -51,7 +50,7 @@ class RotationLog(SigmondLog):
       self.failed = True
       return
 
-    rotation_tasks_xml = log_xml_root.findall("Task/DoCorrMatrixRotation")
+    log_xml_root.findall("Task/DoCorrMatrixRotation")
     # if len(rotation_tasks_xml) != 1:
     #   logging.warning("Could not find single <DoCorrMatrixRotation> tag")
     #   return
@@ -313,7 +312,6 @@ class SpectrumLog(SigmondLog):
   def parse(self, log_xml_root):
     self.energies = SortedDict()
     self.reorder = True
-    fit_fail = False
     energy_level_xmls = log_xml_root.findall("Task/DoRotCorrMatInsertFitInfos/SinglePivot/ReorderEnergies/EnergyLevel")
     energy_level_xmls += log_xml_root.findall("Task/DoRotCorrMatInsertFitInfos/RollingPivot/ReorderEnergies/EnergyLevel")
     if not energy_level_xmls:

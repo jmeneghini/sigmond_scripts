@@ -5,8 +5,6 @@ import sys
 
 import h5py
 import numpy as np
-import regex
-import tqdm
 
 import sigmond as sig
 import defs
@@ -142,7 +140,7 @@ def convert_mesons(ensemble):
 
   primary_data_handler = data_handlers[0]
 
-  for pref in primary_data_handler[f'/c2_meson'].keys():
+  for pref in primary_data_handler['/c2_meson'].keys():
     for irrep in primary_data_handler[f'/c2_meson/{pref}'].keys():
       dataset_path = f'/c2_meson/{pref}/{irrep}'
       opsets = [list(data_handler[dataset_path].attrs['operators']) for data_handler in data_handlers]

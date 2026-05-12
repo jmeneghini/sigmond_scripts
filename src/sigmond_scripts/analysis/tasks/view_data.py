@@ -1,10 +1,7 @@
 import os
-from enum import Enum
 
 from sortedcontainers import SortedSet
-import logging
 import pylatex
-import xml.etree.ElementTree as ET
 
 import utils.util as util
 import tasks.task
@@ -12,7 +9,6 @@ import operator_info.operator_set
 import sigmond_info.sigmond_input
 import sigmond_info.sigmond_info
 
-import sigmond
 
 
 class ViewData(tasks.task.Task):
@@ -166,7 +162,7 @@ class ViewData(tasks.task.Task):
       operators = operator_set.operators
       data_files = self.data_files
       for channel in operator_set.channels:
-        channel_data_files = self.data_handler.getChannelDataFiles(channel)
+        self.data_handler.getChannelDataFiles(channel)
         data_files += self.data_handler.getChannelDataFiles(channel)
 
       project_name = self.project_name(operator_set.name)
@@ -242,7 +238,7 @@ class ViewData(tasks.task.Task):
 
       data_files = self.data_files
       for channel in operator_set.channels:
-        channel_data_files = self.data_handler.getChannelDataFiles(channel)
+        self.data_handler.getChannelDataFiles(channel)
         data_files += self.data_handler.getChannelDataFiles(channel)
 
       if self.split_pdfs:

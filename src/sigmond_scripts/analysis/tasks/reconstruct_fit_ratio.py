@@ -1,10 +1,8 @@
 import os
 import shutil
 import logging
-import xml.etree.ElementTree as ET
 import h5py
 import pylatex
-import numpy as np
 
 import tasks.task
 import utils.plotting
@@ -275,7 +273,7 @@ class ReconstructFitRatio(tasks.task.Task):
                 tmax_min = tmin_fit_info['tmax_min']
                 tmax_max = tmin_fit_info['tmax_max']
             else:
-                logging.error(f"Invalid TminVary or TmaxVary config")
+                logging.error("Invalid TminVary or TmaxVary config")
 
             if 'extra_tmaxes' in tmin_fit_info:
               tmaxes = tmin_fit_info.get('extra_tmaxes')
@@ -380,7 +378,7 @@ class ReconstructFitRatio(tasks.task.Task):
                   tmax_min = tmin_fit_info['tmax_min']
                   tmax_max = tmin_fit_info['tmax_max']
               else:
-                  logging.error(f"Invalid TminVary or TmaxVary config")
+                  logging.error("Invalid TminVary or TmaxVary config")
               if 'extra_tmaxes' in tmin_fit_info:
                 tmaxes = tmin_fit_info.get('extra_tmaxes')
                 if isinstance(tmaxes, int):
@@ -559,8 +557,6 @@ class ReconstructFitRatio(tasks.task.Task):
       sigmond_input = self.new_sigmond_input(project_name, inputfile, logfile, data_files)
         
       for level, fit_info in enumerate(fit_infos):
-        energy_obs = fit_info.energy_observable
-        amplitude_obs = fit_info.amplitude_observable
 
         plotfile = self.fit_plotfile(repr(operator_set), level, util.PlotExtension.grace)
         scattering_particle_fit_info = []
@@ -999,7 +995,7 @@ class ReconstructFitRatio(tasks.task.Task):
     
     est_filename = self.estimates_filename
     fests = open(est_filename, 'w+')
-    fests.write(f"obs,val,err\n")
+    fests.write("obs,val,err\n")
     
     #print non interacting levels for each level to their correponding irrp into the csv
     for operator_set, fit_infos in self.spectrum.items():

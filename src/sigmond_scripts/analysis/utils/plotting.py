@@ -105,7 +105,7 @@ def spectrum(thresholds, energies, non_interacting_energies, latex_map, rotate_i
   # create doc and tikz
   doc = util.create_tikz_doc()
   tikz_filename = f"{filename}.tikz"
-  doc.append(pylatex.NoEscape(rf"\input{{spectrum.tikz}}"))
+  doc.append(pylatex.NoEscape(r"\input{spectrum.tikz}"))
 
   error_bar_options = [
       pylatex.NoEscape(r"lebar/.style={black,postaction={decorate,decoration={markings, mark=at position 0.0 with {\draw (0pt,-2.4pt) -- ++(0,4.8pt);}}}}"),
@@ -180,7 +180,7 @@ def spectrum(thresholds, energies, non_interacting_energies, latex_map, rotate_i
     ref_mass_latex = latex_map[ref_name]
     energy_label_tikz += rf" node{{\footnotesize $\frac{{E_\mathrm{{cm}}}}{{m_{ref_mass_latex}}}$}};"
   else:
-    energy_label_tikz += rf" node{{\footnotesize $E_\mathrm{{cm}}$}};"
+    energy_label_tikz += r" node{\footnotesize $E_\mathrm{cm}$};"
 
   tikz_pic.append(pylatex.NoEscape(energy_label_tikz))
 

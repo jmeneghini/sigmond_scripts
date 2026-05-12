@@ -1,7 +1,6 @@
 import os
 import h5py
 
-from typing import NamedTuple
 import logging
 from sortedcontainers import SortedSet
 import tqdm
@@ -9,7 +8,6 @@ import tqdm
 import sigmond_scripts.util as util
 from sigmond_scripts.data_files import DataFiles, FileInfo
 from sigmond_scripts.correlator_data import CorrelatorData
-from sigmond_scripts.operator import Operator
 
 import sigmond
 
@@ -38,7 +36,7 @@ class DataHandler(metaclass=util.Singleton):
     if self.rel_rotated_datadir[0]:
       self.findRotatedData()
 
-    if nodes==None:
+    if nodes is None:
       nodes = 1      
     elif shared_node:
       nodes /= 2
@@ -464,7 +462,6 @@ def _find_data_files(data_dir):
   return data_files
 
 def _find_data_file(full_filename, data_files):
-  file_list_infos = dict()
   bl_corr_files = set()
   bl_vev_files = set()
   bin_files = set()
@@ -478,7 +475,7 @@ def _find_data_file(full_filename, data_files):
         file_type = sigmond.FileType.Bins
       roots = list(h5py_file.keys())
       roots.remove("Info")
-  except OSError as err:
+  except OSError:
     pass
   
   if not roots: 

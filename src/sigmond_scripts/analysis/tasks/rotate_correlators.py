@@ -1,8 +1,6 @@
 import os
 
 import logging
-from sortedcontainers import SortedSet
-from enum import Enum
 import pylatex
 
 import sigmond
@@ -110,8 +108,8 @@ class RotateCorrelators(tasks.task.Task):
 
     except KeyError as err:
       logging.error(f"Invalid key '{err}' in task '{self.task_name}'")
-    except AttributeError as err:
-      logging.error(f"Rotated basis needs a pivot tag")
+    except AttributeError:
+      logging.error("Rotated basis needs a pivot tag")
 
     task_options['plot_info'] = sigmond_info.sigmond_info.PlotInfo.createFromConfig(task_options)
     task_options['rotate_mode'] = sigmond_info.sigmond_info.RotateMode(task_options.pop('rotate_mode', 'samplings_all'))
@@ -234,7 +232,7 @@ class RotateCorrelators(tasks.task.Task):
           for i in range(1,len(op_infos)):
             this_compact_string = rot_op0.compact_str[:-1]
             this_compact_string+=f"{i}"
-            this_rot_op = operator_info.operator.Operator.createFromCompact(this_compact_string);
+            this_rot_op = operator_info.operator.Operator.createFromCompact(this_compact_string)
             rot_op_infos.add(this_rot_op.operator_info)
 #           
           rot_corr_mat = sigmond.CorrelatorMatrixInfo(rot_op_infos, True, subtractvev)

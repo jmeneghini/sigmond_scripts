@@ -162,7 +162,7 @@ def get_data(correlator, data_files, ensemble_name, replica, ensemble_Nt, tsrc, 
   mcobs_xml = ET.Element("MCObservables")
   corr_data_xml = ET.SubElement(mcobs_xml, "BLCorrelatorData")
 
-  bl_op = correlator.getSource().getBasicLapH()
+  correlator.getSource().getBasicLapH()
   # TODO: replace with isFermionic()
 
   file_list_infos = list()
@@ -292,7 +292,7 @@ def get_corr_files(ensemble_name, replica, search_dir, ensembles_file):
   bins_info = sigmond.MCBinsInfo(ensemble_info)
   bins_info.addOmissions(defs.omissions[replica])
   obs_get_handler = sigmond.MCObsGetHandler(mcobs_xml_handler, bins_info, sampling_info)
-  obs_handler = sigmond.MCObsHandler(obs_get_handler, False)
+  sigmond.MCObsHandler(obs_get_handler, False)
 
   print("searching through correlators...", end='')
   corr_handler = sigmond.BLCorrelatorDataHandler(file_list_infos, set(), set(), ensemble_info)

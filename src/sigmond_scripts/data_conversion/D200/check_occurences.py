@@ -2,7 +2,6 @@
 
 import os
 
-import numpy as np
 import h5py
 
 data_type_dirs = ['isodoublet_strange_nucleonlambda', 'isosinglet_nonstrange_nucleonnucleon', 'isoquartet_strange_nucleonsigma', 'isodoublet_nonstrange', 'isoquartet_nonstrange_fermionic', 'isosinglet_strange_fermionic', 'single_hadrons', 'isotriplet_nonstrange_nucleonnucleon', 'isosinglet_doublystrange_lambdalambda', 'isoquintet_doublystrange_sigmasigma']
@@ -24,7 +23,7 @@ def main():
       h5_h = h5py.File(h5_full_file, 'r')
 
       for channel, channel_group in h5_h.items():
-        channel_data = channel_group['data']
+        channel_group['data']
 
         op_list = channel_group.attrs['op_list']
         occurences = channel_group.attrs['op_occurences']

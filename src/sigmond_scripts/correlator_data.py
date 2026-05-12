@@ -1,5 +1,4 @@
 from typing import NamedTuple
-import copy
 import itertools
 import logging
 

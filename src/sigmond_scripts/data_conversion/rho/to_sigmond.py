@@ -6,7 +6,6 @@ import numpy as np
 import xml.etree.ElementTree as ET
 
 import tqdm
-import argparse
 
 import defs
 
@@ -276,7 +275,7 @@ def get_corr_files(ensemble_name, search_dir):
   bins_info = sigmond.MCBinsInfo(ensemble_info)
   bins_info.addOmissions(defs.omissions[ensemble_name])
   obs_get_handler = sigmond.MCObsGetHandler(mcobs_xml_handler, bins_info, sampling_info)
-  obs_handler = sigmond.MCObsHandler(obs_get_handler, False)
+  sigmond.MCObsHandler(obs_get_handler, False)
 
   print("searching through correlators...", end='')
   corr_handler = sigmond.BLCorrelatorDataHandler(file_list_infos, set(), set(), ensemble_info)

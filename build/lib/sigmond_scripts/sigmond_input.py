@@ -65,7 +65,7 @@ class SigmondInput:
     init_tag.append(bins_info.xml())
     sampling_info_xml = sampling_info.xml()
     if precompute and sampling_info.isBootstrapMode():
-      bootstrap_xml = sampling_info_xml.find("Bootstrapper")
+      sampling_info_xml.find("Bootstrapper")
       ET.SubElement(sampling_info_xml, "Precompute")
     init_tag.append(sampling_info_xml)
     init_tag.append(data_files.xml())
@@ -663,7 +663,7 @@ class SigmondInput:
                     fit_tag2.find(ratio_name+"IDIndex").text=this_xml.find(f'Model/SqrtGapTo{twothree[i]}Energy/IDIndex').text
                     
                 if fit_info.model==fit_info_lib.FitModel.TimeForwardThreeIndExponential:
-                    ratio_name = f'TemporalCorrelatorFit/Model/SingleHadronEnergy/'
+                    ratio_name = 'TemporalCorrelatorFit/Model/SingleHadronEnergy/'
                     fit_tag2.find(ratio_name+"Name").text=this_xml.find('Model/FirstEnergy/Name').text
                     fit_tag2.find(ratio_name+"IDIndex").text=this_xml.find('Model/FirstEnergy/IDIndex').text
 
@@ -673,7 +673,7 @@ class SigmondInput:
                     fit_tag2.find(ratio_name+"IDIndex").text=this_xml.find('Model/SqrtGapToSecondEnergy/IDIndex').text
                     
                 if fit_info.model==fit_info_lib.FitModel.TimeForwardDoubleExpRatio1:
-                    ratio_name = f'TemporalCorrelatorInteractionRatioFit/Model/SHGap/'
+                    ratio_name = 'TemporalCorrelatorInteractionRatioFit/Model/SHGap/'
                     fit_tag2.find(ratio_name+"Name").text=this_xml.find('Model/SqrtGapToSecondEnergy/Name').text
                     fit_tag2.find(ratio_name+"IDIndex").text=this_xml.find('Model/SqrtGapToSecondEnergy/IDIndex').text
                     # ratio_name = f'TemporalCorrelatorInteractionRatioFit/Model/SHGapAmp/'

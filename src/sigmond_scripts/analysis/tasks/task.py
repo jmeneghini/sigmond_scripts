@@ -1,8 +1,6 @@
 import os
 from abc import ABCMeta, abstractmethod
 import pylatex
-from typing import NamedTuple
-from enum import Enum
 
 import operator_info.operator
 import data_handling.data_handler

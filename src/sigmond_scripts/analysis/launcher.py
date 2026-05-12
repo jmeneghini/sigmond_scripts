@@ -6,7 +6,8 @@ import concurrent.futures
 import multiprocessing
 import xml.etree.ElementTree as ET
 import datetime
-import math, time
+import math
+import time
 
 import yaml
 import progressbar
@@ -72,7 +73,7 @@ def read_config(config_filenames):
   if 'Execute' in config:
     try:
       executor = Executor(**config.pop('Execute'))
-    except TypeError as err:
+    except TypeError:
       logging.critical("Invalid arguments passed to 'Execute' block")
 
   # Read 'Initialize' section which includes
@@ -88,7 +89,7 @@ def read_config(config_filenames):
   if ensembles_file:
     logging.info(f"Ensembles File: {ensembles_file}")
   else:
-    logging.info(f"Ensembles File: default")
+    logging.info("Ensembles File: default")
 
   precompute = init_conf.get('precompute_bootstraps', True)
   logging.info(f"Precompute Bootstraps: {precompute}")
@@ -214,7 +215,7 @@ class Executor:
     if self.mode == "local" or self.mode == "slurm":
       try: #if task=rotate and write_to_file=True, max_sim should be 1
         self.simultaneous_jobs = self.exec_options.get('max_simultaneous', multiprocessing.cpu_count())
-      except ValueError as err:
+      except ValueError:
         logging.error("Invalid value passed to 'max_simultaneous'")
       if self.mode == "slurm":
         self.email = self.exec_options.get('email', None)
@@ -286,7 +287,7 @@ class Executor:
         
 
 def wait_for_job_completion(job_id):
-    slurm = Slurm()
+    Slurm()
     while True:
         output = subprocess.check_output(["squeue", "-j", str(job_id), "-h"], universal_newlines=True)
         lines = output.strip().split("\n")

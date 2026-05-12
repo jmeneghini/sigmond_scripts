@@ -5,8 +5,6 @@ import sys
 
 import h5py
 import numpy as np
-import regex
-import tqdm
 
 import sigmond as sig
 import defs
@@ -65,7 +63,6 @@ def read_op_files():
       pref_str = None
       pref_key = None
       irrep_key = None
-      irrep_str = None
       for line in fh:
         line = line.rstrip()
         whitespace = len(line) - len(line.lstrip())
@@ -83,7 +80,7 @@ def read_op_files():
             op_data[flavor][pref_key] = dict()
 
           irrep_key = irrep.strip()
-          irrep_str = defs.convert_irrep(irrep_key, psq)
+          defs.convert_irrep(irrep_key, psq)
           op_data[flavor][pref_key][irrep_key] = list()
 
         elif whitespace == 3:
@@ -119,7 +116,7 @@ def read_op_files():
         pref_str = f"Pref=({pref[1]},{pref[2]},{pref[3]})"
         op_data[flavor][pref] = dict()
         for irrep, irrep_spin_strs in irreps.items():
-          irrep_str = defs.convert_irrep(irrep, psq)
+          defs.convert_irrep(irrep, psq)
           op_data[flavor][pref][irrep] = list()
           for irrep_spin_str in irrep_spin_strs:
             symmetric_op_str = f"{defs.symmetric_SU3_flavor_dibaryon}_{irrep_spin_str}"
@@ -265,10 +262,9 @@ def convert_baryons(ensemble):
     datasets.append(f_handler['c2_baryon'])
 
   flavors = ['octet']
-  num_flavors = 1
   if not ensemble.su3:
     flavors = list(map(lambda x: x.decode('utf-8'), f_handler['baryons'][:]))
-    num_flavors = len(flavors)
+    len(flavors)
 
   ensemble_info = sig.MCEnsembleInfo(f"{ensemble.type}_{ensemble.name}", 'ensembles.xml')
   bins_info = sig.MCBinsInfo(ensemble_info)

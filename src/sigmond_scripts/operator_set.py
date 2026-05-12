@@ -2,16 +2,12 @@ import os
 import stat
 import logging
 from sortedcontainers import SortedSet
-from typing import NamedTuple
 
 import sigmond_scripts.util as util
 import sigmond_scripts.operator as operator
-import sigmond_scripts.channel as channel
-import sigmond_scripts.sigmond_input as sigmond_input
 import sigmond_scripts.sigmond_info as sigmond_info
 #import sigmond_scripts.analysis.data_handling.data_handler as data_handler
 
-import sigmond
 
 def getOperatorSet(options):
   operators = [operator.Operator(op) for op in options.pop('operators', list())]
@@ -21,7 +17,7 @@ def getOperatorSet(options):
       opops = options.pop('optimized_operators', list())
       pivot_info = sigmond_info.PivotInfo(**pivot_info)
       operator_set = sigmond_scripts.analysis.operator_info.operator_set.RotatedOperatorSet(name, pivot_info, opops, *operators)
-    except KeyError as err:
+    except KeyError:
       logging.error("RotatedOperatorSet missing key {err}")
 
   elif (name := options.pop('name', False)):
@@ -310,9 +306,9 @@ def write_operators_to_yaml(yaml_file, name, operators, append=True):
   f_handler.write(f"x-{name}: &{name}\n")
   f_handler.write(f"  name: {name}\n")
   if len(operators) > 1:
-    f_handler.write(f"  pivot_info:\n")
-    f_handler.write(f"    <<: *PIVOT_INFO\n")
-  f_handler.write(f"  operators:\n")
+    f_handler.write("  pivot_info:\n")
+    f_handler.write("    <<: *PIVOT_INFO\n")
+  f_handler.write("  operators:\n")
   for operator in operators:
     f_handler.write(f"    - {operator.op_str()}\n")
   f_handler.write("\n")

@@ -80,7 +80,7 @@ class AverageCorrelators(tasks.task.Task):
     if (user_averaged_channels := options.pop('averaged_channels', SortedSet())):
       try:
         self.averaged_channels = {averaged_channel: self.averaged_channels[averaged_channel] for averaged_channel in user_averaged_channels}
-      except KeyError as err:
+      except KeyError:
         logging.error("Channel {err} not an averaged channel of the found raw channels")
 
     self.coefficients = options.pop('coefficients', dict())

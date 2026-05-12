@@ -1,5 +1,4 @@
 import copy
-from sortedcontainers import SortedSet
 
 import sigmond
 from sigmond_scripts.isospin import Isospin
@@ -185,7 +184,7 @@ class Channel:
                 "irrep_row"       : irrep_row,
                 "momentum_squared" : int(mom[4:]), #remove 'PSQ='
             }
-        except ValueError as err:
+        except ValueError:
             isospin, strangeness, irrep, mom = channel_string.split(' ')
             kw_args = {
                 "isospin"     : isospin[3:], #remove 'iso'
@@ -207,7 +206,7 @@ class Channel:
                 "irrep_row"       : irrep_row,
                 "momentum_squared" : int(mom[1:]), #remove 'P'
             }
-        except ValueError as err:
+        except ValueError:
             isospin, strangeness, irrep, mom = channel_string.split('_')
             if 'm' in strangeness:
               strangeness = -int(strangeness[-1])

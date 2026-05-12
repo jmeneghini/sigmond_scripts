@@ -115,7 +115,6 @@ class Operator:
           op_str += f"_{matches['spat_id']}"
 
       else: # multi-hadron
-        orig_compact_str = compact_str
         iso_index = int(compact_str[regex.search("\d", compact_str).start()])
         op_str = "iso" + Isospin(iso_index+1).name
         for flavor_ind in range(iso_index):

@@ -128,7 +128,7 @@ def get_data(correlators, ensemble_name):
     for src_i, src_op in enumerate(operators):
 
       correlator = sigmond.CorrelatorInfo(snk_op, src_op)
-      correlator_opposite = sigmond.CorrelatorInfo(src_op, snk_op)
+      sigmond.CorrelatorInfo(src_op, snk_op)
       for tsep in range(tmin, tmax+1):
         correlator_time = sigmond.CorrelatorAtTimeInfo(correlator, tsep, False, False)
         correlator_time_re_obsinfo = sigmond.MCObsInfo(correlator_time, sigmond.ComplexArg.RealPart)
@@ -196,7 +196,7 @@ def get_corr_files(ensemble_name, search_dir):
   bins_info = sigmond.MCBinsInfo(ensemble_info)
   bins_info.addOmissions(defs.omissions[ensemble_name])
   obs_get_handler = sigmond.MCObsGetHandler(mcobs_xml_handler, bins_info, sampling_info)
-  obs_handler = sigmond.MCObsHandler(obs_get_handler, False)
+  sigmond.MCObsHandler(obs_get_handler, False)
 
   corr_handler = sigmond.BLCorrelatorDataHandler(file_list_infos, set(), set(), ensemble_info)
 

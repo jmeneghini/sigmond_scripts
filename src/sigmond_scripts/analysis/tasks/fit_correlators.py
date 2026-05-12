@@ -1,6 +1,5 @@
 import logging
 from typing import NamedTuple
-from sortedcontainers import SortedSet
 import os
 import pylatex
 import itertools
@@ -249,7 +248,6 @@ class FitCorrelators(tasks.task.Task):
     # read operator sets
     subtractvev = task_options.pop('subtractvev', True)
     operator_fits = dict()
-    non_interacting_operators_lists = dict()
     try:
       for operator_set_conf in task_options.pop('operator_sets'):
         operator_set = operator_info.operator_set.getOperatorSet(operator_set_conf)
